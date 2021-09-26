@@ -12,10 +12,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))
 app.use(cookieParser());
 
-db.sequelize.sync().then((req) => {
+// connect to the database
+db.sequelize.sync().then(() => {
     app.listen(port, () => {
         console.log(`Server is running on http://localhost/${5000}`);
     })
 })
 
+// middlware routes 
 app.use('/api', userRoute);

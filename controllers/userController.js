@@ -6,17 +6,19 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
 
-// send mail
+// send mail package
 const nodemailer = require('nodemailer');
 
-// middleware auth
-const { validateToken } = require('../Middlewares/authMiddleware');
-
+// token creation for jwt
 const maxAge = 3 * 24 * 60 * 60;
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: maxAge
     });
+}
+// protect routes in frontend
+const auth_get = (req,res) => {
+    res.json({isAuth: true});
 }
 
 const user_get = (req,res) => {
@@ -27,6 +29,17 @@ const user_get = (req,res) => {
         .catch(err => {
             console.log(err)
         }) 
+}
+
+// get profile
+const userProfile_get = (req,res) => {
+    User.findOne({where: {userName: req.params.id}})
+    .then((user) => {
+        res.json(user);
+    })
+    .catch(err => {
+        console.log(err);
+    })
 }
 
 const user_register = (req, res) => {
@@ -84,11 +97,18 @@ const user_register = (req, res) => {
             password: hash,
         })
         .then((user) => {
-                const token = createToken(user.id);
-                res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
+            const token = createToken(user.id);
+            res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
             res.status(201).json({success:"You have successfully registered!",redirect:"/login",user: user.id});
         })
-        .catch(err => console.log(err));
+        .catch((err) => {
+            const errorObj = {}; 
+            // map inside the error object to get the value of errors
+            err.errors.map((error) => {
+                errorObj[error.path] = error.message;
+            })
+            res.json({userNameErr: errorObj.userName, emailErr: errorObj.email});
+        });
     })
 
    
@@ -137,7 +157,7 @@ const update_password = (req,res) => {
             {where: {id: id}}
             )
             .then((updtdPsswrd) => {
-                res.json({updtdPsswrd,redirect:'/login',mssg:'Password has been updated successfully!'});
+                res.json({updtdPsswrd,redirect:'/login', mssg:'Password has been updated successfully!'});
             })
             .catch(err => console.log(err))
       }) 
@@ -154,5 +174,7 @@ module.exports = {
     user_login,
     forgot_password,
     update_password,
-    user_logout
+    user_logout,
+    auth_get,
+    userProfile_get
 }

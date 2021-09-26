@@ -19,7 +19,15 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             unique: true,
             validate: {
-                notEmpty: true
+                //custom validation
+                isUnique(value) {
+                    return User.findOne({where:{userName:value}})
+                    .then((username) => {
+                        if(username) {
+                            throw new Error('This username has already been taken');
+                        }
+                    })
+                }
             }
         },
         email: {
@@ -28,7 +36,17 @@ module.exports = (sequelize, DataTypes) => {
             unique: true,
             validate: {
                 notEmpty: true,
-                isEmail: true
+                isEmail: {
+                    msg:"Please enter a valid email"
+                },
+               isUnique(value) {
+                   return User.findOne({where: {email: value}})
+                    .then((email) => {
+                        if(email){
+                            throw new Error('This email has already been taken');
+                        }
+                    })
+               }
             }
         },
         password: {
