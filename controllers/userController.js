@@ -165,7 +165,7 @@ const update_password = (req,res) => {
 
 const user_logout = (req, res) => {
     res.cookie('jwt','', { maxAge: 1 });
-    res.json({redirect:'/login'})
+    res.json({redirect:'/login', isAuth: false})
 }
 
 module.exports = {
