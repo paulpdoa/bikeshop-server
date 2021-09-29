@@ -79,14 +79,7 @@ const user_register = (req, res) => {
      text: "Hello world?", 
      html: output,
    }
-   transporter.sendMail(mailOption,(err, info) => {
-    if(err) {
-        console.log(err)
-    } else {
-        res.json({user, mail:"An email has been sent!",redirect:'/login'});
-        console.log("Email has beent sent " + info.response);
-    }
-});
+   
 
     bcrypt.hash(password,10,(err,hash) => {
         User.create({
@@ -97,6 +90,14 @@ const user_register = (req, res) => {
             password: hash,
         })
         .then((user) => {
+            transporter.sendMail(mailOption,(err, info) => {
+                if(err) {
+                    console.log(err)
+                } else {
+                    res.json({user, mail:"An email has been sent!",redirect:'/login'});
+                    console.log("Email has beent sent " + info.response);
+                }
+            });
             const token = createToken(user.id);
             res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
             res.status(201).json({success:"You have successfully registered!",redirect:"/login",user: user.id});
@@ -136,10 +137,41 @@ const user_login = (req, res) => {
 const forgot_password = (req,res) => {
     const username = req.body.userName;
 
-    User.findOne({where: {userName: username}})
+    User.findOne({where: { userName: username }})
         .then((user) => {
             if(user) {
-                res.status(200).json({user: user, mssg: 'User has been found, please wait...', redirect:'/changepassword'})
+                const randomId = Math.floor(Math.random() * 1000000); 
+                const token = createToken(user.id);
+
+                const forgetLink = `http://localhost:3000/changepassword/${token}/${user.id}`;
+                const output = 
+                    `
+                    <h1>Hello ${user.firstName} ${user.lastName}!</h1>
+                    <p>It seems like you're trying to reset your password</p>
+                    <h2>Please click this <a href=${forgetLink}>Link</a> to change password</h2> 
+                    `
+                let transporter = nodemailer.createTransport({
+                    service:"hotmail",
+                    auth: {
+                    user: process.env.USER_SECRET, 
+                    pass: process.env.PASSWORD_SECRET, 
+                    },
+                });
+                let mailOption = {
+                    from: '"Paul Andres 👻" <polopdoandres@outlook.com>', 
+                    to: `${user.email}`, 
+                    subject: "Hello ✔", 
+                    text: "Hello world?", 
+                    html: output,
+                }
+                transporter.sendMail(mailOption,(err, info) => {
+                    if(err) { 
+                        console.log(err)
+                    } else {
+                        res.status(200).json({ user: user, mssg: 'User has been found, please check your email for confirmation...',token: token })
+                        console.log("Email has been sent " + info.response);
+                    }
+                })
             } else {
                 res.json({mssg:"Sorry, this user doesn't exist"})
             }
