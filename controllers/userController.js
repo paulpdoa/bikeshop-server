@@ -48,6 +48,7 @@ const user_register = (req, res) => {
     const username = req.body.userName;
     const email = req.body.email;
     const password = req.body.password;
+    const role = req.body.role;
 
      // sending to email
      const output = 
@@ -88,6 +89,7 @@ const user_register = (req, res) => {
             userName: username,
             email: email,
             password: hash,
+            role: role
         })
         .then((user) => {
             transporter.sendMail(mailOption,(err, info) => {
