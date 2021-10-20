@@ -4,7 +4,12 @@ const app = express();
 // Use sequelize to connect to database
 const db = require('./models');
 // routes
-const userRoute = require('./routes/userRoute');
+const customerRoute = require('./routes/customerRoute');
+const adminRoute = require('./routes/adminRoute');
+const bikeRoute = require('./routes/bikeRoute');
+const partRoute = require('./routes/partRoute');
+const cartRoute = require('./routes/cartRoute');
+const accessoryRoute = require('./routes/accessoryRoute');
 
 const port = process.env.PORT || 5000;
 
@@ -19,5 +24,12 @@ db.sequelize.sync().then(() => {
     })
 })
 
+app.use(express.static('./public'));
+
 // middlware routes 
-app.use('/api', userRoute);
+app.use('/api', customerRoute);
+app.use('/api', adminRoute);
+app.use('/api', bikeRoute);
+app.use('/api', partRoute);
+app.use('/api/',accessoryRoute);
+app.use(cartRoute);

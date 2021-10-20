@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 // database
-const { User } = require('../models');
+const { Customer } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -18,13 +18,13 @@ const createToken = (id) => {
 }
 // protect routes in frontend
 const auth_get = (req,res) => {
-    res.json({isAuth: true});
+    res.json({isAuth: true, role: 'customer'});
 }
 
-const user_get = (req,res) => {
-    User.findAll()
-        .then((users) => {
-            res.send(users);
+const customer_get = (req,res) => {
+    Customer.findAll()
+        .then((customers) => {
+            res.send(customers);
         })
         .catch(err => {
             console.log(err)
@@ -32,8 +32,8 @@ const user_get = (req,res) => {
 }
 
 // get profile
-const userProfile_get = (req,res) => {
-    User.findOne({where: {userName: req.params.id}})
+const customerProfile_get = (req,res) => {
+    Customer.findOne({where: {userName: req.params.id}})
     .then((user) => {
         res.json(user);
     })
@@ -42,13 +42,12 @@ const userProfile_get = (req,res) => {
     })
 }
 
-const user_register = (req, res) => {
+const customer_register = (req, res) => {
     const firstname = req.body.firstName;
     const lastname = req.body.lastName;
     const username = req.body.userName;
     const email = req.body.email;
     const password = req.body.password;
-    const role = req.body.role;
 
      // sending to email
      const output = 
@@ -81,15 +80,13 @@ const user_register = (req, res) => {
      html: output,
    }
    
-
     bcrypt.hash(password,10,(err,hash) => {
-        User.create({
+        Customer.create({
             firstName: firstname,
             lastName: lastname,
             userName: username,
             email: email,
-            password: hash,
-            role: role
+            password: hash
         })
         .then((user) => {
             transporter.sendMail(mailOption,(err, info) => {
@@ -118,16 +115,16 @@ const user_register = (req, res) => {
 }
 
 // login user
-const user_login = (req, res) => {
+const customer_login = (req, res) => {
     const { userName, password } = req.body;
 
-    User.findOne({ where: { userName: userName } })
+    Customer.findOne({ where: { userName: userName } })
         .then((user) => {
            bcrypt.compare(password,user.password,(error,response) => {
                if(response) {
                 const token = createToken(user.id);
                 res.cookie('jwt', token, { httpOnly: true, maxAge: maxAge * 1000 });
-                res.status(200).json({ token:token,userID: user.id,user: userName,redirect:'/' })
+                res.status(200).json({ token:token,userID: user.id,user: userName,redirect:'/', role: user.role })
                } else {
                 res.json({pass:"Incorrect password"})
                }
@@ -139,7 +136,7 @@ const user_login = (req, res) => {
 const forgot_password = (req,res) => {
     const username = req.body.userName;
 
-    User.findOne({where: { userName: username }})
+    Customer.findOne({where: { userName: username }})
         .then((user) => {
             if(user) {
                 const randomId = Math.floor(Math.random() * 1000000); 
@@ -186,7 +183,7 @@ const forgot_password = (req,res) => {
 const update_password = (req,res) => {
     const { id,password } = req.body;
     bcrypt.hash(password,10,(err,hash) => {
-        User.update(
+        Customer.update(
             {password: hash},
             {where: {id: id}}
             )
@@ -197,18 +194,26 @@ const update_password = (req,res) => {
       }) 
 }
 
-const user_logout = (req, res) => {
+const customer_logout = (req, res) => {
     res.cookie('jwt','', { maxAge: 1 });
     res.json({redirect:'/login', isAuth: false})
 }
 
+const update_profile = (req, res) => {
+    Customer.update({where: {userName: req.body.username}})
+        .then(updated => {
+            res.json({mssg:'Updated'})
+        }) 
+        .catch(err => console.log(err));
+}
 module.exports = {
-    user_get,
-    user_register,
-    user_login,
+    customer_get,
+    customer_register,
+    customer_login,
     forgot_password,
     update_password,
-    user_logout,
+    customer_logout,
     auth_get,
-    userProfile_get
+    customerProfile_get,
+    update_profile
 }
