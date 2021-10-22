@@ -2,7 +2,7 @@ require('dotenv').config();
 
 // database tables
 const { Admin } = require('../models');
-const { Product } = require('../models');
+const { Inventory } = require('../models');
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
@@ -81,7 +81,7 @@ const admin_logout = (req, res) => {
 // products adding
 
 const product_get = (req, res) => {
-    Product.findAll()
+    Inventory.findAll()
         .then((product) => {
             res.json(product);
         })
@@ -91,20 +91,24 @@ const product_get = (req, res) => {
 }
 
 const admin_addproduct = (req, res) => {
-   const { brand, product_type, item, price, quantity, description } = req.body;
+   const { brand, product_type, item, price, quantity, color, description } = req.body;
+
+   console.log(req.body);
+  
     //Create filename
    const fileType = req.file.mimetype.split("/")[1];
    const product = Date.now() + '-' + item + '.' + fileType;
    
     fs.rename(`./public/products/${req.file.filename}`, `./public/products/${product}`,() => {
-        Product.create({
-            image: product, 
-            product_type,
-            brand,
-            item,
-            price,
-            quantity,
-            description  
+        Inventory.create({
+            product_image: product, 
+            product_type:product_type,
+            brand_name:brand,
+            item_name: item,
+            product_price: price,
+            quantity: quantity,
+            product_color_id:color,
+            description: description  
          })
          .then((product) => {
              res.status(200).json({ status: true, product })

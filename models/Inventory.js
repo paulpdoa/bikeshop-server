@@ -1,6 +1,6 @@
 module.exports = (sequelize, DataTypes) => {
-    const Product = sequelize.define("Product",{
-        image: {
+    const Inventory = sequelize.define("Inventory",{
+        product_image: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -8,15 +8,15 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.STRING,
           allowNull: false  
         },
-        brand: {
+        brand_name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        item: {
+        item_name: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        price: {
+        product_price: {
             type: DataTypes.DECIMAL(20,2),
             allowNull:false
         },
@@ -24,10 +24,16 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
+        product_color_id: {
+            type: DataTypes.INTEGER
+        },
+        product_size: {
+            type: DataTypes.STRING
+        },
         description: {
             type: DataTypes.STRING,
             allowNull: false
         }
     })
-    return Product;
+    return Inventory;
 }

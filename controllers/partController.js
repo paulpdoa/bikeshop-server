@@ -1,7 +1,7 @@
-const { Product } = require('../models');
+const { Inventory } = require('../models');
 
 const part_get = (req,res) => {
-    Product.findAll({ where: {product_type: 'parts'} })
+    Inventory.findAll({ where: {product_type: 'parts'} })
         .then((part) => {
             res.json(part);
         })
@@ -11,7 +11,7 @@ const part_get = (req,res) => {
 }
 
 const part_detail_get = (req,res) => {
-    Product.findOne({where: {item: req.params.item}})
+    Inventory.findOne({where: {item: req.params.item}})
     .then((part) => {
         res.json(part);
     })

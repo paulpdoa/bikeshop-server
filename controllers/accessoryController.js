@@ -1,7 +1,7 @@
-const { Product } = require('../models');
+const { Inventory } = require('../models');
 
 const accessory_get = (req, res) => {
-    Product.findAll({ where: { product_type: 'accessory' } })
+    Inventory.findAll({ where: { product_type: 'accessory' } })
     .then((accessory) => {
         res.json(accessory);
     })
@@ -9,7 +9,7 @@ const accessory_get = (req, res) => {
 }
 
 const accessory_detail_get = (req, res) => {
-    Product.findOne({ where: { item: req.params.accessory } })
+    Inventory.findOne({ where: { item_name: req.params.accessory } })
     .then((accessory) => {
         res.json(accessory)
     })

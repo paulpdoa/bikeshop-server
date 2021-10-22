@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        product_id: {
+        inventory_id: {
             type: DataTypes.INTEGER,
             allowNull: false
         },

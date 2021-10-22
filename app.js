@@ -10,6 +10,7 @@ const bikeRoute = require('./routes/bikeRoute');
 const partRoute = require('./routes/partRoute');
 const cartRoute = require('./routes/cartRoute');
 const accessoryRoute = require('./routes/accessoryRoute');
+const colorsRoute = require('./routes/colorsRoute');
 
 const port = process.env.PORT || 5000;
 
@@ -20,7 +21,7 @@ app.use(cookieParser());
 // connect to the database
 db.sequelize.sync().then(() => {
     app.listen(port, () => {
-        console.log(`Server is running on http://localhost/${5000}`);
+        console.log(`Server is running on http://localhost:${5000}`);
     })
 })
 
@@ -31,5 +32,6 @@ app.use('/api', customerRoute);
 app.use('/api', adminRoute);
 app.use('/api', bikeRoute);
 app.use('/api', partRoute);
-app.use('/api/',accessoryRoute);
+app.use('/api', accessoryRoute);
 app.use(cartRoute);
+app.use('/api', colorsRoute);

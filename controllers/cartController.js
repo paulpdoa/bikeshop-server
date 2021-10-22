@@ -1,10 +1,10 @@
-const { Cart, Customer, Product } = require('../models');
+const { Cart, Customer, Inventory } = require('../models');
 
 const cartItem_get = (req, res) => {
     Customer.hasMany(Cart, {foreignKey: 'customer_id'})
-    Product.hasMany(Cart, {foreignKey: 'product_id'})
+    Inventory.hasMany(Cart, {foreignKey: 'inventory_id'})
     Cart.belongsTo(Customer,{ foreignKey: 'customer_id' })
-    Cart.belongsTo(Product, { foreignKey: 'product_id'})
+    Cart.belongsTo(Inventory, { foreignKey: 'inventory_id'})
 
     Cart.findAll({
         include: [{model: Product}]
@@ -17,14 +17,14 @@ const cartItem_get = (req, res) => {
 
 const userCart_get = (req, res) => {
     // joining three tables
-    Product.hasMany(Cart, {foreignKey:'product_id'})
-    Cart.belongsTo(Product, { foreignKey: 'product_id'})
+    Inventory.hasMany(Cart, {foreignKey:'inventory_id'})
+    Cart.belongsTo(Inventory, { foreignKey: 'inventory_id'})
 
     Customer.hasMany(Cart,{foreignKey:'id'})
     Cart.belongsTo(Customer,{foreignKey:'customer_id'})
 
     Cart.findAll({ 
-        include: [{model: Product},{model: Customer}],
+        include: [{model: Inventory},{model: Customer}],
         where: { customer_id: req.params.id } 
     })
     .then((user) => {
@@ -36,7 +36,7 @@ const userCart_get = (req, res) => {
 const addToCart_post = (req, res) => {
     Cart.create({
         customer_id: req.body.buyerId,
-        product_id: req.body.productId,
+        inventory_id: req.body.inventoryId,
         quantity: req.body.quantity
     })
     .then((cart) => {
