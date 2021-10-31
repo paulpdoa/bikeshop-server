@@ -53,7 +53,8 @@ const addToCart_post = (req, res) => {
     Cart.create({
         customer_id: req.body.buyerId,
         inventory_id: req.body.inventoryId,
-        quantity: req.body.quantity
+        quantity: req.body.quantity,
+        status: req.body.status
     })
     .then((cart) => {
         res.status(200).json({ mssg: 'Added to cart!', status: true })

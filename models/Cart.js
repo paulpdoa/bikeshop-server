@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
         },
         quantity: {
             type: DataTypes.INTEGER
+        },
+        status: {
+            type: DataTypes.STRING
         }
     })
     return Cart;
