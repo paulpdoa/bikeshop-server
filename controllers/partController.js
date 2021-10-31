@@ -11,7 +11,7 @@ const part_get = (req,res) => {
 }
 
 const part_detail_get = (req,res) => {
-    Inventory.findOne({where: {item: req.params.item}})
+    Inventory.findOne({where: {item_name: req.params.item}})
     .then((part) => {
         res.json(part);
     })

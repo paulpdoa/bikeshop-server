@@ -11,7 +11,7 @@ const bike_get = (req,res) => {
 }
 
 const bike_detail_get = (req, res) => {
-    Inventory.findOne({ where: { item: req.params.item } })   
+    Inventory.findOne({ where: { item_name: req.params.item } })   
     .then((product) => {
         res.json(product)
     })

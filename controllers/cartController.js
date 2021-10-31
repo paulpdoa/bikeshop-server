@@ -1,5 +1,21 @@
 const { Cart, Customer, Inventory } = require('../models');
 
+const carts_get = (req, res) => {
+    Cart.findAll()
+    .then((content) => {
+        res.json(content);
+    })
+    .catch((err) => console.log(err));
+}
+const cartsDetail_get = (req,res) => {
+    const { id } = req.params;
+    Cart.findOne({ where: { id: id }})
+    .then((detail) => {
+        res.json(detail);
+    })
+    .catch((err) => console.log(err));
+}
+
 const cartItem_get = (req, res) => {
     Customer.hasMany(Cart, {foreignKey: 'customer_id'})
     Inventory.hasMany(Cart, {foreignKey: 'inventory_id'})
@@ -45,10 +61,22 @@ const addToCart_post = (req, res) => {
     .catch(err => console.log(err))
 }
 
+const cartProduct_delete = (req,res) => {
+    const { id } = req.params;
+
+    Cart.destroy({ where: { id: id }})
+    .then((removed) => {
+        res.json({ mssg: 'Item has been deleted' })
+    })
+    .catch((err) => console.log(err))
+}
 
 
 module.exports = {
+    carts_get,
+    cartsDetail_get,
     addToCart_post,
     userCart_get,
-    cartItem_get
+    cartItem_get,
+    cartProduct_delete
 }
