@@ -53,6 +53,7 @@ const addToCart_post = (req, res) => {
     Cart.create({
         customer_id: req.body.buyerId,
         inventory_id: req.body.inventoryId,
+        transaction_id: req.body.transactionId,
         quantity: req.body.quantity,
         status: req.body.status
     })

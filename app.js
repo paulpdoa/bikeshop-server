@@ -11,6 +11,7 @@ const partRoute = require('./routes/partRoute');
 const cartRoute = require('./routes/cartRoute');
 const accessoryRoute = require('./routes/accessoryRoute');
 const colorsRoute = require('./routes/colorsRoute');
+const orderRoute = require('./routes/orderRoute');
 
 const port = process.env.PORT || 5000;
 
@@ -35,3 +36,4 @@ app.use('/api', partRoute);
 app.use('/api', accessoryRoute);
 app.use(cartRoute);
 app.use('/api', colorsRoute);
+app.use('/api', orderRoute);
