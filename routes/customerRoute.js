@@ -17,5 +17,6 @@ router.post('/forgot',customerController.forgot_password);
 router.put('/customers', customerController.update_password);
 router.get('/logout', customerController.customer_logout);
 router.put('/customers/:id',customerController.update_profile);
+router.get('/payment-method',customerController.payment_method_get);
 
 module.exports = router;

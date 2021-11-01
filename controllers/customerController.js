@@ -1,7 +1,7 @@
 require('dotenv').config();
 
 // database
-const { Customer } = require('../models');
+const { Customer,PaymentMethod } = require('../models');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 
@@ -206,6 +206,15 @@ const update_profile = (req, res) => {
         }) 
         .catch(err => console.log(err));
 }
+
+const payment_method_get = (req, res) => {
+    PaymentMethod.findAll()
+    .then((payment) => {
+        res.json(payment)
+    })
+    .catch(err => console.log(err));
+}
+
 module.exports = {
     customer_get,
     customer_register,
@@ -215,5 +224,6 @@ module.exports = {
     customer_logout,
     auth_get,
     customerProfile_get,
-    update_profile
+    update_profile,
+    payment_method_get
 }
