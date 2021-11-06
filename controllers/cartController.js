@@ -41,7 +41,7 @@ const userCart_get = (req, res) => {
 
     Cart.findAll({ 
         include: [{model: Inventory},{model: Customer}],
-        where: { customer_id: req.params.id } 
+        where: { customer_id: req.params.id, status: 'pending' } 
     })
     .then((user) => {
         res.json(user);
