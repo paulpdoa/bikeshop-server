@@ -1,29 +1,48 @@
-const { Order, Cart, Inventory } = require('../models');
+const { Order, Cart, Inventory, Customer } = require('../models');
+const db = require('../models');
 
-const order_get = (req, res) => {
-    Order.findAll()
-    .then((order) => {
-        res.json(order)
-    })
-    .catch(err => console.log(err));
+const order_get = async (req, res) => {
+    orders = await db.sequelize.query(
+        `SELECT c.id as order_id, concat(cu.firstName,' ',cu.lastName) as Customer, cu.userName, i.product_image,i.brand_name,i.item_name,
+        i.description,c.quantity FROM orders o join carts c on o.transaction_id=c.transaction_id
+        join inventories i on c.inventory_id=i.id join customers cu on o.transaction_id=cu.id group 
+        by i.item_name HAVING COUNT(i.item_name) >= 1 order by order_id`,{
+        type: db.sequelize.QueryTypes.SELECT
+        });
+
+    return res.status(200).json(orders);
 }
 
+// for viewing customer order information
+const order_info_get = async (req, res) => {
+    const {id} = req.params
+    
+    order_infos = await db.sequelize.query(
+        `SELECT cu.id,c.id as order_id, concat(cu.firstName,' ',cu.lastName) as Customer, cu.userName,cu.email, 
+        i.product_image,i.brand_name,i.item_name,o.ordered_date,
+        i.description,c.quantity FROM orders o join carts c on o.transaction_id=c.transaction_id
+        join inventories i on c.inventory_id=i.id join customers cu on o.transaction_id=cu.id
+        where c.id=${id} group by i.item_name HAVING COUNT(i.item_name) >= 1 order by order_id`,{
+            type:db.sequelize.QueryTypes.SELECT
+        });
+        return res.status(200).json(order_infos);
+}
+
+// for orders of customer
 const order_detail_get = async (req, res) => {
 
-    // Cart.hasMany(Order, { foreignKey: 'transaction_id' });
-    // Order.belongsTo(Cart, { foreignKey: 'transaction_id' });
+    const { id } = req.params;
 
-    // Inventory.hasMany(Order, { foreignKey: 'id' })
-    // Order.belongsTo(Inventory, { foreignKey: 'id' })
+    orders = await db.sequelize.query(
+    `SELECT c.id,concat(cu.firstName,' ',cu.lastName) as Customer, i.product_image,i.brand_name,i.item_name,
+    i.description,c.quantity FROM orders o join carts c on o.transaction_id=c.transaction_id
+    join inventories i on c.inventory_id=i.id join customers cu on o.transaction_id=cu.id 
+    where o.transaction_id=${id} group by i.item_name HAVING COUNT(i.item_name) >= 1`, {
+    type: db.sequelize.QueryTypes.SELECT
+    });
 
-    // Order.findAll({
-    //     include: [{ model: Cart }, { model: Inventory }],
-    //     where: { transaction_id: req.params.id }
-    // })
-    // .then((order) => {
-    //     res.json(order);
-    // })
-    // .catch(err => console.log(err));
+    return res.status(200).json(orders);
+
 }
 
 const order_post = (req, res) => {
@@ -55,6 +74,7 @@ const order_post = (req, res) => {
 
 module.exports = {
     order_get,
+    order_info_get,
     order_detail_get,
     order_post
 }

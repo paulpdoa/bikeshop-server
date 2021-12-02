@@ -22,7 +22,7 @@ const auth_get = (req,res) => {
 }
 
 const customer_get = (req,res) => {
-    Customer.findAll()
+    Customer.findAll({ where: { status:'active' } })
         .then((customers) => {
             res.send(customers);
         })
@@ -42,12 +42,24 @@ const customerProfile_get = (req,res) => {
     })
 }
 
+const customer_delete = (req,res) => {
+    Customer.update(
+        { status: req.body.status },
+        {where: { userName: req.body.username }}
+        )
+        .then((deletedUser) => {
+            res.json({ redirect: '/login',mssg:'Account has been deleted!' })
+        })
+        .catch((err) => console.log(err));
+}
+
 const customer_register = (req, res) => {
     const firstname = req.body.firstName;
     const lastname = req.body.lastName;
     const username = req.body.userName;
     const email = req.body.email;
     const password = req.body.password;
+    const status = 'active';
 
      // sending to email
      const output = 
@@ -86,7 +98,8 @@ const customer_register = (req, res) => {
             lastName: lastname,
             userName: username,
             email: email,
-            password: hash
+            password: hash,
+            status: status
         })
         .then((user) => {
             transporter.sendMail(mailOption,(err, info) => {
@@ -225,5 +238,6 @@ module.exports = {
     auth_get,
     customerProfile_get,
     update_profile,
-    payment_method_get
+    payment_method_get,
+    customer_delete
 }

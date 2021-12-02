@@ -11,6 +11,7 @@ router.get('/auth', validateToken, customerController.auth_get);
 
 router.get('/customers', customerController.customer_get);
 router.get('/customers/:id',customerController.customerProfile_get);
+router.put('/customers/:id',customerController.customer_delete)
 router.post('/register',customerController.customer_register);
 router.post('/login', customerController.customer_login);
 router.post('/forgot',customerController.forgot_password);
