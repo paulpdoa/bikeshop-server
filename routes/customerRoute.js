@@ -11,13 +11,18 @@ router.get('/auth', validateToken, customerController.auth_get);
 
 router.get('/customers', customerController.customer_get);
 router.get('/customers/:id',customerController.customerProfile_get);
-router.put('/customers/:id',customerController.customer_delete)
+router.get('/logout', customerController.customer_logout);
+router.get('/payment-method',customerController.payment_method_get);
+
 router.post('/register',customerController.customer_register);
 router.post('/login', customerController.customer_login);
 router.post('/forgot',customerController.forgot_password);
+router.post('/payment',customerController.add_payment);
+
+router.put('/customers/:id',customerController.customer_delete);
+router.put('/customers/update/:id',customerController.customer_verify);
 router.put('/customers', customerController.update_password);
-router.get('/logout', customerController.customer_logout);
 router.put('/customers/:id',customerController.update_profile);
-router.get('/payment-method',customerController.payment_method_get);
+
 
 module.exports = router;

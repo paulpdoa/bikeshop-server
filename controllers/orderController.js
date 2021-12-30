@@ -1,4 +1,4 @@
-const { Order, Cart, Inventory, Customer } = require('../models');
+const { Order, Cart } = require('../models');
 const db = require('../models');
 
 const order_get = async (req, res) => {
@@ -18,7 +18,7 @@ const order_info_get = async (req, res) => {
     const {id} = req.params
     
     order_infos = await db.sequelize.query(
-        `SELECT cu.id,c.id as order_id, concat(cu.firstName,' ',cu.lastName) as Customer, cu.userName,cu.email, 
+        `SELECT o.id as o_id,cu.id,c.id as order_id, concat(cu.firstName,' ',cu.lastName) as Customer, cu.userName,cu.email, 
         i.product_image,i.brand_name,i.item_name,o.ordered_date,
         i.description,c.quantity FROM orders o join carts c on o.transaction_id=c.transaction_id
         join inventories i on c.inventory_id=i.id join customers cu on o.transaction_id=cu.id
@@ -61,20 +61,23 @@ const order_post = (req, res) => {
     .catch(err => console.log(err));
 
     // update the status of cart to ordered when the transaction is done
-    Cart.update(
-        { status: 'ordered' },
-        { where: { transaction_id: transactionId } }
-    )
+    Cart.update({ status: 'ordered' },{ where: { transaction_id: transactionId } })
     .then((ordered) => {
         console.log(ordered)
     })
     .catch(err => console.log(err));
+}
 
+const order_delete = (req, res) => {
+    const { id } = req.params;
+
+    console.log(id);
 }
 
 module.exports = {
     order_get,
     order_info_get,
     order_detail_get,
-    order_post
+    order_post,
+    order_delete
 }

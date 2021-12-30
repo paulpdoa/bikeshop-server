@@ -7,5 +7,6 @@ router.get('/customer/orders',orderController.order_get);
 router.get('/customer/info/:id',orderController.order_info_get);
 router.get('/customer/orders/:id',orderController.order_detail_get);
 router.post('/customer/orders',orderController.order_post);
+router.delete('/customer/info/:id',orderController.order_delete);
 
 module.exports = router;

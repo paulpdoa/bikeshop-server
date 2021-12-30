@@ -92,8 +92,6 @@ const product_get = (req, res) => {
 
 const admin_addproduct = (req, res) => {
    const { brand, product_type, item, price, quantity, color, description } = req.body;
-
-   console.log(req.body);
   
     //Create filename
    const fileType = req.file.mimetype.split("/")[1];
